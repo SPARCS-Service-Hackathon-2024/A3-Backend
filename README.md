@@ -1,2 +1,2 @@
 # A3-Backend
-Frontend repository for Team A3
+Backend repository for Team A3
