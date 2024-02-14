@@ -8,7 +8,7 @@ WORKDIR /app
 COPY requirements/requirements.txt requirements/requirements.txt
 
 # Install any needed packages specified in requirements files
-RUN pip install --no-cache-dir -r requirements/prod.txt
+RUN pip install --no-cache-dir -r requirements/requirements.txt
 
 # Copy the entire FastAPI project to the container
 COPY /src /app
