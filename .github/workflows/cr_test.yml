@@ -12,11 +12,15 @@ jobs:
     - name: Login KakaoCloud
       uses: docker/login-action@v2
       with:
-        registry: ${{ secrets.KAKAO_CLOUD_PROJECT_NAME }}.kr-central-2.kcr.dev
+        registry: ${{ secrets.KAKAO_CLOUD_PROJECT_NAME }}.kr-central-1.kcr.dev
         username: ${{ secrets.KAKAO_CLOUD_ACCESS_KEY }}
         password: ${{ secrets.KAKAO_CLOUD_ACCESS_SECRET_KEY }}
 
-    - name: Set ENV and Build/Push
-      run: |
-        echo "TIME=$(date '+%Y-%m-%d-%H-%M-%S')" >> $GITHUB_ENV
-        echo ${{env.TIME}}
+    - name: Set ENV
+      run: echo "TIME=$(date "+%Y-%m-%d-%H-%M")" >> $GITHUB_ENV
+
+    - name: Build and Push
+      uses: docker/build-push-action@v4
+      with:
+        push: true
+        tags: ${{ secrets.KAKAO_CLOUD_PROJECT_NAME }}.kr-central-1.kcr.dev/${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}/kep-library:${{ env.TIME }}
