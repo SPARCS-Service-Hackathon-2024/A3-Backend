@@ -23,4 +23,4 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         push: true
-        tags: ${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}.kr-central-2.kcr.dev/${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}/kep-library:${{ env.TIME }}
+        tags: ${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}.kr-central-2.kcr.dev/${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}/kep-library:$(date "+%Y-%m-%d-%H-%M-%S")
