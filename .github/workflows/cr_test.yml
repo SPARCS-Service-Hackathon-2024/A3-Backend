@@ -12,7 +12,7 @@ jobs:
     - name: Login KakaoCloud
       uses: docker/login-action@v2
       with:
-        registry: ${{ secrets.KAKAO_CLOUD_PROJECT_NAME }}.kr-central-1.kcr.dev
+        registry: ${{ secrets.KAKAO_CLOUD_PROJECT_NAME }}.kr-central-2.kcr.dev
         username: ${{ secrets.KAKAO_CLOUD_ACCESS_KEY }}
         password: ${{ secrets.KAKAO_CLOUD_ACCESS_SECRET_KEY }}
 
@@ -23,4 +23,4 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         push: true
-        tags: ${{ secrets.KAKAO_CLOUD_PROJECT_NAME }}.kr-central-1.kcr.dev/${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}/kep-library:${{ env.TIME }}
+        tags: ${{ secrets.KAKAO_CLOUD_PROJECT_NAME }}.kr-central-2.kcr.dev/${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}/kep-library:${{ env.TIME }}
