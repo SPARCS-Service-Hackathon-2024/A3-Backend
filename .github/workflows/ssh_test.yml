@@ -1,0 +1,25 @@
+name: ssh_test
+
+on:
+  push:
+    branches:
+      None
+  pull_request:
+    branches:
+      None
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: ssh test
+      uses: appleboy/ssh-action@v0.1.4
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+            echo "hello world"
+            echo "hello world 2"
