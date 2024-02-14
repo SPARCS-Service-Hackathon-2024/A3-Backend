@@ -1,25 +1,29 @@
-name: ssh_test
+name: deploy
 
+# Controls when the workflow will run
 on:
+  # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches:
-      None
-  pull_request:
-    branches:
-      None
+      - main
+
 
 jobs:
-  build:
+  SSH:
     runs-on: ubuntu-latest
-    steps:  
-    - uses: actions/checkout@v2
-    - name: ssh test
-      uses: appleboy/ssh-action@v0.1.4
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        password: ${{ secrets.SSH_PASSWORD }}
-        port: ${{ secrets.SSH_PORT }}
-        script: |
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: ssh to vm
+        uses: appleboy/ssh-action@master
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }} # 내가 변수로 저장한 pem key
+          host: ${{ secrets.SSH_HOST }} # 내가 변수로 저장한 ip
+          username: ${{ secrets.SSH_USER }} # 내가 변수로 저장한 User
+          script: |
             echo "hello world"
-            echo "hello world 2"
+            echo "hello world2"
+
+# 깃허브 레파지토리가 프라이빗으로 만들어져 있을때. 
+# git pull https://${{ secrets.GIT_USER }}:${{ secrets.GIT_PASSWORD }}@github.com/blockenters/streamlit_kmeans.git
+# https://velog.io/@wonjun12/AWS-EC2%EC%99%80-Github-Actions-%EC%97%B0%EB%8F%99 참고
