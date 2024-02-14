@@ -19,5 +19,4 @@ jobs:
     - name: Set ENV and Build/Push
       run: |
         echo "TIME=$(date '+%Y-%m-%d-%H-%M-%S')" >> $GITHUB_ENV
-        docker build -t ${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}.kr-central-2.kcr.dev/${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}/kep-library:${{ env.TIME }} .
-        docker push ${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}.kr-central-2.kcr.dev/${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}/kep-library:${{ env.TIME }}
+        echo ${{env.TIME}}
