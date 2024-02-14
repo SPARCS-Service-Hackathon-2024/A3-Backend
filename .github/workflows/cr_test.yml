@@ -20,7 +20,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v4
       with:
-        images:
+        images: name/app
         tags: |
           type=raw, value={{date 'YYYYMMDDHHmmss'}}
 
@@ -29,4 +29,4 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         push: true
-        tags: ${{ secrets.KAKAO_CLOUD_PROJECT_NAME }}.kr-central-2.kcr.dev/${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}/kep-library:${{ steps.meta.outputs.tags }}
+        tags: ${{ secrets.KAKAO_CLOUD_PROJECT_NAME }}.kr-central-2.kcr.dev/${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}/${{ steps.meta.outputs.tags }}
