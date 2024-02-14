@@ -1,6 +1,9 @@
 name: KakaoCloud-handson
 run-name: KakaoCloud handson workflow
-on: [push]
+on:
+  push:
+    branches:
+      - test
 
 jobs:
   deploy-image:
