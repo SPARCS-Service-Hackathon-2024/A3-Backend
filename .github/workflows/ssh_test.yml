@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
+    steps:  
     - uses: actions/checkout@v2
     - name: ssh test
       uses: appleboy/ssh-action@v0.1.4
