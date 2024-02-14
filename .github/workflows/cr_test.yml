@@ -22,7 +22,7 @@ jobs:
       with:
         images: name/app
         tags: |
-          type=raw, value={{date "+%Y-%m-%d-%H-%M"}
+          type=raw, value={{date 'YYYYMMDDHHmmss'}}
 
 
     - name: Build and Push
