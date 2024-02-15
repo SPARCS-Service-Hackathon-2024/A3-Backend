@@ -58,10 +58,15 @@ async def submit_answer(id: int, content: ContentData, user=Depends(get_current_
         context = make_context(parent=question, db=db, user_id=user.user_id)
         content = generate_comment(context)
         comment = LQuestions(user_id=user.user_id, parents_id=id, content=content, is_answerable=False, level=question.level+1, chapter_id=question.chapter_id, next_question_id=question.next_question_id)
+        
         db.add(comment)
         db.commit()
         db.refresh(comment)
+        
         user.last_answered_question_id = comment.question_id
+        db.commit()
+        db.refresh(user)
+        
         return {
             'question_id': comment.question_id
         }

@@ -10,7 +10,7 @@ def generate_comment(input_messages):
     # Initial system message describing the role and behavior of the GPT
     system_message = {
         "role": "system",
-        "content": "이 AI는 사용자의 답변을 토대로 사용자의 경험과 감정에 공감하며, 대화에 대한 마무리 멘트를 제공합니다. 답변은 간결하며 2 문장을 넘어가지 않습니다."
+        "content": "이 AI는 사용자의 답변을 토대로 사용자의 경험과 감정에 공감하며, 대화에 대한 마무리 멘트를 제공합니다. 답변은 간결하며 2 문장을 넘어가지 않습니다. 해당 답변은 절대로 질문이 아니어야 합니다."
     }
 
     
