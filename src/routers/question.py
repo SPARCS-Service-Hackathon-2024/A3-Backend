@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, BackgroundTasks
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
 from database import get_db
@@ -92,7 +92,7 @@ async def make_followed_question(parent_id: int, db: Session, user_id: int):
     }
 
 @router.get("/{id}/skip")
-async def skip_question(id: int, user=Depends(get_current_user), db: Session = Depends(get_db)):
+async def skip_question(id: int, background_tasks: BackgroundTasks, user=Depends(get_current_user), db: Session = Depends(get_db)):
     question = db.query(LQuestions).filter(LQuestions.question_id == id).first()
 
     if question.user_id != user.user_id and question.user_id != -1:
@@ -105,6 +105,14 @@ async def skip_question(id: int, user=Depends(get_current_user), db: Session = D
     user.last_answered_question_id = question.next_question_id
     db.commit()
 
+    if question.chapter_id != 1:
+        background_tasks.add_task(add_summary, question, user, db)
+
+    return {
+        'question_id': question.next_question_id
+    }
+
+def add_summary(question: LQuestions, user: LUsers, db: Session):
     contexts = make_context(parent=question, db=db, user_id=user.user_id)
     print(contexts)
 
@@ -117,11 +125,6 @@ async def skip_question(id: int, user=Depends(get_current_user), db: Session = D
         print(contents)
         db.add(LSummary(user_id=user.user_id, question_id=root.question_id, content=contents[1]['text'], chapter_id=question.chapter_id))
         db.commit()
-
-    return {
-        'question_id': question.next_question_id
-    }
-
 
 def make_context(parent: LQuestions, db: Session, user_id: int):
     context = []
