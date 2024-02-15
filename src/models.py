@@ -15,16 +15,23 @@ class LUsers(Base):
     created_at = Column(DATETIME(fsp=3), nullable=False, server_default=text("CURRENT_TIMESTAMP(3)"))
     kakao_id = Column(BIGINT, nullable=True)
 
+class LChapter(Base):
+    __tablename__ = 'LChapter'
+    chapter_id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String(255), nullable=False)
+
 class LQuestions(Base):
     __tablename__ = 'LQuestions'
     question_id = Column(Integer, primary_key=True, autoincrement=True)
     is_fixed = Column(Boolean, nullable=False, default=False)
+    chatper_id = Column(Integer, ForeignKey('LChapter.chapter_id', onupdate='Cascade'), nullable=False)
     user_id = Column(Integer, ForeignKey('LUsers.user_id', onupdate='Cascade'), nullable=False)
     parents_id = Column(Integer, nullable=False)
     content = Column(Text, nullable=False)
     created_at = Column(DATETIME(fsp=3), nullable=False, server_default=text("CURRENT_TIMESTAMP(3)"))
 
     LUsers = relationship('LUsers')
+    LChapter = relationship('LChapter')
 
 class LAnswers(Base):
     __tablename__ = 'LAnswers'

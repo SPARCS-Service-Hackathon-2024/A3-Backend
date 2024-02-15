@@ -7,7 +7,6 @@ from models import LUsers
 from datetime import datetime, timedelta
 from fastapi.security import HTTPBearer
 
-
 from jose import jwt, JWTError
 
 SECRET_KEY = "secretkey"
