@@ -1,7 +1,6 @@
 import openai
 from dotenv import load_dotenv
 import os
-from kss import split_sentences
 
 # Load environment variables from .env file
 load_dotenv()
@@ -28,7 +27,7 @@ def generate_response(input_messages):
             # max_tokens=200,  # Adjust based on the length of response you expect; keep it short for 1-3 phrases
         )
 
-        replies = split_sentences(completion.choices[0].message.content)
+        replies = completion.choices[0].message.content
         return replies
     except Exception as e:
         print(f"An error occurred: {e}")
