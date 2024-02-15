@@ -15,16 +15,15 @@ async def kakao_login(id_token: str, db: Session = Depends(get_db)):
     response = requests.post("https://kapi.kakao.com/v2/user/me", headers=headers)
     if response.status_code == 200:
         user_info = response.json()
+        print(user_info)
     else:
         raise HTTPException(status_code=response.status_code, detail="Failed to fetch user information from Kakao")
     
     user = db.query(LUsers).filter(LUsers.kakao_id == user_info['id']).first()
 
     if user is None:
-        new_user = LUsers(kakao_id=user_info['id'], username=user_info['properties']['username'], email=user_info['kakao_account']['email'])
-        print(new_user)
+        new_user = LUsers(kakao_id=user_info['id'], name=user_info['properties']['nickname'])
         db.add(new_user)
         db.commit()
         return new_user
-    print(user)
     return user
