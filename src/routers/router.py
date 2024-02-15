@@ -30,6 +30,31 @@ async def create_user(request: UserRequest, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "create user"}
 
+# get /auth/me
+# jwt 토큰을 이용해 본인 정보 확인
+
+# get /question/id
+# 질문을 받아 온다
+# response
+    # question_id: int
+    # content: string
+
+# post /question/id
+# 유저가 문항에 대한 답변을 입력
+# header: 유저 정보 토큰
+# request
+    # content: string
+# response
+    # question_id: int    # 다음 question_id를 생성한 후 그에 대한 정보를 주면 됨
+    # content: string
+
+
+
+
+
+
+
+
 """
 
 
