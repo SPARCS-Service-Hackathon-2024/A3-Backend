@@ -91,12 +91,17 @@ async def make_followed_question(parent_id: int, db: Session, user_id: int):
         p = db.query(LQuestions).filter(LQuestions.question_id == p.parents_id).first()
     context.reverse()
     print(context)
-    content = generate_response(context) #여기에 ai로 새 꼬리질문 만들어 넣기
-    print(content)
-    followed = LQuestions(user_id=parent.user_id, parents_id=parent_id, content=content, is_answerable=True, level=parent.level+1, chapter_id=parent.chapter_id, next_question_id=parent.next_question_id)
-    db.add(followed)
-    db.commit()
-    db.refresh(followed)
+    contents = generate_response(context) #여기에 ai로 새 꼬리질문 만들어 넣기
+    print(contents)
+    for content in contents:
+        if content == contents[-1]:
+            is_answerable = True
+        else:
+            is_answerable = False
+        followed = LQuestions(user_id=user_id, parents_id=parent_id, content=content, is_answerable=is_answerable, level=parent.level+1, chapter_id=parent.chapter_id, next_question_id=parent.next_question_id)
+        db.add(followed)
+        db.commit()
+        db.refresh(followed)
     return {
         'status': 'success',
         'id': followed.question_id,
