@@ -75,10 +75,10 @@ async def kakao_login(token_data: TokenData, db: Session = Depends(get_db)):
             kakao_id=user_info['id'], name=user_info['properties']['nickname'])
         db.add(new_user)
         db.commit()
-        new_user.access_token = access_token
 
         access_token = jwt.encode({"sub": str(new_user.user_id), "exp": datetime.utcnow() + timedelta(weeks=4)}, SECRET_KEY, algorithm=ALGORITHM)
-
+        new_user.access_token = access_token
+        
         return new_user
     
     access_token = jwt.encode({"sub": str(user.user_id), "exp": datetime.utcnow(
