@@ -66,30 +66,7 @@ async def make_followed_question(parent_id: int, db: Session, user_id: int):
             'status': 'fail',
             'message': '최대 꼬리질문 개수를 초과했습니다.'
         }
-    context = []
-    p = parent
-    while p is not None:
-        print(p.content)
-        a = db.query(LAnswers).filter(LAnswers.question_id == p.question_id).filter(LAnswers.user_id == user_id).first()
-        print(a)
-        print(a.content)
-        if a is None:
-            p = db.query(LQuestions).filter(LQuestions.question_id == p.parents_id).first()
-            continue
-        context.append(
-            {
-                'speaker': 'user',
-                'text': a.content
-            }
-        )
-        context.append(
-            {
-                'speaker': 'ai',
-                'text': p.content
-            }
-        )
-        p = db.query(LQuestions).filter(LQuestions.question_id == p.parents_id).first()
-    context.reverse()
+    context = make_context(parent=parent, db=db, user_id=user_id)
     print(context)
     contents = generate_response(context) #여기에 ai로 새 꼬리질문 만들어 넣기
     print(contents)
@@ -125,3 +102,31 @@ async def skip_question(id: int, user=Depends(get_current_user), db: Session = D
     return {
         'question_id': question.next_question_id
     }
+
+
+def make_context(parent: LQuestions, db: Session, user_id: int):
+    context = []
+    p = parent
+    while p is not None:
+        print(p.content)
+        a = db.query(LAnswers).filter(LAnswers.question_id == p.question_id).filter(LAnswers.user_id == user_id).first()
+        print(a)
+        print(a.content)
+        if a is None:
+            p = db.query(LQuestions).filter(LQuestions.question_id == p.parents_id).first()
+            continue
+        context.append(
+            {
+                'speaker': 'user',
+                'text': a.content
+            }
+        )
+        context.append(
+            {
+                'speaker': 'ai',
+                'text': p.content
+            }
+        )
+        p = db.query(LQuestions).filter(LQuestions.question_id == p.parents_id).first()
+    context.reverse()
+    return context
