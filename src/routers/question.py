@@ -26,7 +26,10 @@ MAX_FOLLOWED_QUESTION = 4
 
 @router.post("/{id}",
              summary="질문에 답변하기")
-async def submit_answer(id: int, content: ContentData, user=Depends(get_current_user), db: Session = Depends(get_db)):
+async def submit_answer(id: int, body: ContentData, user=Depends(get_current_user), db: Session = Depends(get_db)):
+    if body is None:
+        raise HTTPException(status_code=400, detail="Invalid request body")
+    content = body.content
     question = db.query(LQuestions).filter(LQuestions.question_id == id).first()
     if not question.is_answerable:
         raise HTTPException(status_code=400, detail="답변할 수 없는 질문입니다.")
@@ -39,7 +42,7 @@ async def submit_answer(id: int, content: ContentData, user=Depends(get_current_
     
     # set user last question id
     
-    answer = LAnswers(user_id=user.user_id, question_id=id, content=content.content)
+    answer = LAnswers(user_id=user.user_id, question_id=id, content=content)
     db.add(answer)
     db.commit()
     db.refresh(answer)
