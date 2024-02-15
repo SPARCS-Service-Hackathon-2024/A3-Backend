@@ -6,7 +6,6 @@ import requests
 from models import LUsers
 from datetime import datetime, timedelta
 
-
 from jose import jwt, JWTError
 
 SECRET_KEY = "secretkey"
@@ -23,7 +22,9 @@ async def get_current_user(token: str = Header(None), db: Session = Depends(get_
     if token is None:
         raise HTTPException(status_code=401, detail="토큰이 필요합니다.")
     try:
+        print("test1")
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        print("test2")
         print(user_id)
         print(user_id)
         print(user_id)

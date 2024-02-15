@@ -8,6 +8,13 @@ CREATE TABLE `LUsers` (
     PRIMARY KEY (`user_id`)
 );
 
+CREATE TABLE `LChapter` (
+	`chapter_id`	INT AUTO_INCREMENT	NOT NULL,
+	`title`	VARCHAR(255)	NOT NULL,
+	PRIMARY KEY (`chapter_id`)
+);
+)
+
 CREATE TABLE `LQuestions` (
 	`question_id`	INT AUTO_INCREMENT	NOT NULL,
 	`is_fixed`	BOOL	NOT NULL	DEFAULT FALSE,
@@ -16,7 +23,8 @@ CREATE TABLE `LQuestions` (
 	`content`	TEXT	NOT NULL,
 	`created_at`	DATETIME(3)	NOT NULL	DEFAULT CURRENT_TIMESTAMP(3),
     PRIMARY KEY (`question_id`),
-    FOREIGN KEY (`user_id`) REFERENCES `LUsers`(`user_id`)
+    FOREIGN KEY (`user_id`) REFERENCES `LUsers`(`user_id`),
+	FOREIGN kEY (`chapter_id`) REFERENCES `LChapter`(`chapter_id`
 );
 
 CREATE TABLE `LAnswers` (
