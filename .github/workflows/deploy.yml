@@ -1,4 +1,4 @@
-name: the ultimate CI/CD pipeline 
+name: the ultimate CI/CD pipeline
 
 on:  
   push: 
