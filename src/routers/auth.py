@@ -59,13 +59,7 @@ async def kakao_login(token_data: TokenData, db: Session = Depends(get_db)):
 
     user = db.query(LUsers).filter(LUsers.kakao_id == user_info['id']).first()
 
-<<<<<<< HEAD
-    # access token 만들기
-    access_token = jwt.encode({"sub": user.user_id},
-                              SECRET_KEY, algorithm=ALGORITHM)
-=======
     access_token = jwt.encode({"sub": str(user.user_id), "exp": datetime.utcnow() + timedelta(weeks=4)}, SECRET_KEY, algorithm=ALGORITHM)
->>>>>>> bbdec40e0caa1c99f0be8912f0981ab8f54b119d
 
     if user is None:
         new_user = LUsers(
