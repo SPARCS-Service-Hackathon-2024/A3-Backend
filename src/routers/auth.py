@@ -51,7 +51,7 @@ async def kakao_login(token_data: TokenData, db: Session = Depends(get_db)):
 
     # 테스트용 코드
     if token_data.id_token == "minjae":
-        user = db.query(LUsers).filter(LUsers.user_id == -1).first()
+        user = db.query(LUsers).filter(LUsers.user_id == 200).first()
         access_token = jwt.encode({"sub": str(user.user_id), "exp": datetime.utcnow() + timedelta(weeks=4)}, SECRET_KEY, algorithm=ALGORITHM)
         user.access_token = access_token
         return user
