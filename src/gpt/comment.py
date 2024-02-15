@@ -6,7 +6,7 @@ import os
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-def generate_response(input_messages):
+def generate_comment(input_messages):
     # Initial system message describing the role and behavior of the GPT
     system_message = {
         "role": "system",
@@ -47,7 +47,3 @@ input_messages = [
     {"speaker": "ai", "text": "가족 여행은 정말 좋은 추억을 만들기에 완벽한 순간이죠. 여행에서 가장 인상 깊었던 일은 무엇인가요?"},
     {"speaker": "user", "text": "해변에서 아이들이 처음으로 파도를 만끽하는 모습을 본 것이에요. 그들의 웃음소리가 아직도 귀에 생생해요."},
 ]
-
-# Generate and print the response
-response = generate_response(input_messages)
-print("GPT-4 Response:", response)

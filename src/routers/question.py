@@ -2,10 +2,12 @@ from fastapi import APIRouter, HTTPException
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
 from database import get_db
-from models import LQuestions, LAnswers, LUsers
+from models import LQuestions, LAnswers, LUsers, LSummary
 from pydantic import BaseModel
 from routers.auth import get_current_user
 from gpt.utils import generate_response
+from gpt.summarize import generate_summary
+from gpt.comment import generate_comment
 
 router = APIRouter()
 
@@ -53,10 +55,15 @@ async def submit_answer(id: int, content: ContentData, user=Depends(get_current_
             'question_id': result['id'],
         }
     else:
-        user.last_answered_question_id = question.next_question_id
+        context = make_context(parent=question, db=db, user_id=user.user_id)
+        content = generate_comment(context)
+        comment = LQuestions(user_id=user.user_id, parents_id=id, content=content, is_answerable=False, level=question.level+1, chapter_id=question.chapter_id, next_question_id=question.next_question_id)
+        db.add(comment)
         db.commit()
+        db.refresh(comment)
+        user.last_answered_question_id = comment.question_id
         return {
-            'question_id': question.next_question_id
+            'question_id': comment.question_id
         }
 
 async def make_followed_question(parent_id: int, db: Session, user_id: int):
@@ -68,17 +75,11 @@ async def make_followed_question(parent_id: int, db: Session, user_id: int):
         }
     context = make_context(parent=parent, db=db, user_id=user_id)
     print(context)
-    contents = generate_response(context) #여기에 ai로 새 꼬리질문 만들어 넣기
-    print(contents)
-    for content in contents:
-        if content == contents[-1]:
-            is_answerable = True
-        else:
-            is_answerable = False
-        followed = LQuestions(user_id=user_id, parents_id=parent_id, content=content, is_answerable=is_answerable, level=parent.level+1, chapter_id=parent.chapter_id, next_question_id=parent.next_question_id)
-        db.add(followed)
-        db.commit()
-        db.refresh(followed)
+    content = generate_response(context) #여기에 ai로 새 꼬리질문 만들어 넣기
+    followed = LQuestions(user_id=user_id, parents_id=parent_id, content=content, is_answerable=True, level=parent.level+1, chapter_id=parent.chapter_id, next_question_id=parent.next_question_id)
+    db.add(followed)
+    db.commit()
+    db.refresh(followed)
     return {
         'status': 'success',
         'id': followed.question_id,
@@ -98,7 +99,15 @@ async def skip_question(id: int, user=Depends(get_current_user), db: Session = D
     
     user.last_answered_question_id = question.next_question_id
     db.commit()
-    
+
+    contexts = make_context(parent=question, db=db, user_id=user.user_id)
+    print(contexts)
+    if (len(contexts) > 0):
+        contents = generate_summary(contexts)
+        print(contents)
+        db.add(LSummary(user_id=user.user_id, question_id=id, content=contents[1]['text'], chapter_id=question.chapter_id))
+        db.commit()
+
     return {
         'question_id': question.next_question_id
     }
@@ -108,10 +117,7 @@ def make_context(parent: LQuestions, db: Session, user_id: int):
     context = []
     p = parent
     while p is not None:
-        print(p.content)
         a = db.query(LAnswers).filter(LAnswers.question_id == p.question_id).filter(LAnswers.user_id == user_id).first()
-        print(a)
-        print(a.content)
         if a is None:
             p = db.query(LQuestions).filter(LQuestions.question_id == p.parents_id).first()
             continue
