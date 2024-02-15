@@ -1,4 +1,3 @@
-from pydantic import BaseModel
 from pydantic import BaseModel, Field
 from fastapi import Header, Depends, APIRouter, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
