@@ -23,4 +23,4 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ${{ secrets.KAKAO_CLOUD_PROJECT_NAME }}.kr-central-1.kcr.dev/${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}:latest
+        tags: ${{ secrets.KAKAO_CLOUD_PROJECT_NAME }}.kr-central-2.kcr.dev/${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}/image_name:latest
