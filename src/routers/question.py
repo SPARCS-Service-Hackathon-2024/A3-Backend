@@ -9,7 +9,7 @@ from utils.openai import generate_response
 
 router = APIRouter()
 
-@router.get("",
+@router.get("/{id}",
             summary="id로 질문 가져오기")
 async def get_question(id: int, db: Session = Depends(get_db)):
     question = db.query(LQuestions).filter(
