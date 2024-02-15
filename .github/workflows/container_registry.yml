@@ -1,4 +1,4 @@
-name: KakaoCloud Container Registry Test
+name: KakaoCloud Container Registry Test 
 
 on:
   push:
