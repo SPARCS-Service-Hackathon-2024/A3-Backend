@@ -14,7 +14,8 @@ class LUsers(Base):
     address = Column(String(255), nullable=True)
     created_at = Column(DATETIME(fsp=3), nullable=False, server_default=text("CURRENT_TIMESTAMP(3)"))
     kakao_id = Column(BIGINT, nullable=True)
-
+    last_answered_question_id = Column(Integer, nullable=True, default=1)
+1
 class LChapter(Base):
     __tablename__ = 'LChapter'
     chapter_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -29,7 +30,10 @@ class LQuestions(Base):
     parents_id = Column(Integer, nullable=False)
     content = Column(Text, nullable=False)
     created_at = Column(DATETIME(fsp=3), nullable=False, server_default=text("CURRENT_TIMESTAMP(3)"))
-
+    is_answerable = Column(Boolean, nullable=False, default=True)
+    next_question_id = Column(Integer, nullable=True)
+    level = Column(Integer, nullable=False, default=0)
+                           
     LUsers = relationship('LUsers')
     LChapter = relationship('LChapter')
 
