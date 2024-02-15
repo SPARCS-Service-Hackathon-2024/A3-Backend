@@ -5,9 +5,9 @@ from database import get_db
 from models import LQuestions, LAnswers, LUsers
 from pydantic import BaseModel
 from routers.auth import get_current_user
+from utils.openai import generate_response
 
 router = APIRouter()
-
 
 @router.get("",
             summary="id로 질문 가져오기")
@@ -44,7 +44,7 @@ async def submit_answer(id: int, content: ContentData, user=Depends(get_current_
     db.commit()
     db.refresh(answer)
 
-    result = await make_followed_question(id, db)
+    result = await make_followed_question(id, db, user.user_id)
 
     if result['status'] == 'success':
         user.last_answered_question_id = result['id']
@@ -59,7 +59,7 @@ async def submit_answer(id: int, content: ContentData, user=Depends(get_current_
             'question_id': question.next_question_id
         }
 
-async def make_followed_question(parent_id: int, db: Session):
+async def make_followed_question(parent_id: int, db: Session, user_id: int):
     parent = db.query(LQuestions).filter(LQuestions.question_id == parent_id).first()
     if parent.level == MAX_FOLLOWED_QUESTION:
         return {
@@ -69,7 +69,10 @@ async def make_followed_question(parent_id: int, db: Session):
     context = []
     p = parent
     while p is not None:
-        a = db.query(LAnswers).filter(LAnswers.question_id == p.parents_id).filter(LAnswers.user_id == p.user_id).first()
+        print(p.content)
+        a = db.query(LAnswers).filter(LAnswers.question_id == p.question_id).filter(LAnswers.user_id == user_id).first()
+        print(a)
+        print(a.content)
         if a is None:
             p = db.query(LQuestions).filter(LQuestions.question_id == p.parents_id).first()
             continue
@@ -88,7 +91,8 @@ async def make_followed_question(parent_id: int, db: Session):
         p = db.query(LQuestions).filter(LQuestions.question_id == p.parents_id).first()
     context.reverse()
     print(context)
-    content = "꼬리질문입니다" #여기에 ai로 새 꼬리질문 만들어 넣기
+    content = generate_response(context) #여기에 ai로 새 꼬리질문 만들어 넣기
+    print(content)
     followed = LQuestions(user_id=parent.user_id, parents_id=parent_id, content=content, is_answerable=True, level=parent.level+1, chapter_id=parent.chapter_id, next_question_id=parent.next_question_id)
     db.add(followed)
     db.commit()
