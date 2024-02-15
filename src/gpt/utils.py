@@ -24,7 +24,7 @@ def generate_response(input_messages):
             model="gpt-4",
             messages=messages,
             temperature=0.7,  # Adjust for creativity; lower for more precise responses
-            max_tokens=200,  # Adjust based on the length of response you expect; keep it short for 1-3 phrases
+            # max_tokens=200,  # Adjust based on the length of response you expect; keep it short for 1-3 phrases
         )
 
         reply = completion.choices[0].message.content
