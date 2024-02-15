@@ -107,10 +107,15 @@ async def skip_question(id: int, user=Depends(get_current_user), db: Session = D
 
     contexts = make_context(parent=question, db=db, user_id=user.user_id)
     print(contexts)
+
+    root = question
+    while root.parents_id != -1:
+        root = db.query(LQuestions).filter(LQuestions.question_id == root.parents_id).first()
+
     if (len(contexts) > 0):
         contents = generate_summary(contexts)
         print(contents)
-        db.add(LSummary(user_id=user.user_id, question_id=id, content=contents[1]['text'], chapter_id=question.chapter_id))
+        db.add(LSummary(user_id=user.user_id, question_id=root.question_id, content=contents[1]['text'], chapter_id=question.chapter_id))
         db.commit()
 
     return {
