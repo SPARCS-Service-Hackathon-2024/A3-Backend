@@ -20,7 +20,7 @@ def generate_response(input_messages):
         messages.append({"role": role, "content": msg["text"]})
 
     try:
-        completion = openai.ChatCompletion.create(
+        completion = openai.chat.completions.create(
             model="gpt-4",
             messages=messages,
             temperature=0.7,  # Adjust for creativity; lower for more precise responses
@@ -28,7 +28,7 @@ def generate_response(input_messages):
             stop=["\n", "user:"],  # Stop generating if it encounters these, to keep responses brief
         )
 
-        reply = completion.choices[0].message['content']
+        reply = completion.choices[0].message.content
         return reply
     except Exception as e:
         print(f"An error occurred: {e}")

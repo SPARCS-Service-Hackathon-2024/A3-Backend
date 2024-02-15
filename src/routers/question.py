@@ -5,7 +5,7 @@ from database import get_db
 from models import LQuestions, LAnswers, LUsers
 from pydantic import BaseModel
 from routers.auth import get_current_user
-from utils.openai import generate_response
+from gpt.utils import generate_response
 
 router = APIRouter()
 
