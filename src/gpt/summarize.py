@@ -33,7 +33,7 @@ def generate_summary(input_messages):
         # Prepare the output
         output = [
             {"speaker": "ai", "text": input_messages[0]["text"]},  # The first AI question
-            {"speaker": "ai", "text": summary_response}  # The GPT-generated summary
+            {"speaker": "user", "text": summary_response}  # The GPT-generated summary
         ]
         return output
     except Exception as e:
