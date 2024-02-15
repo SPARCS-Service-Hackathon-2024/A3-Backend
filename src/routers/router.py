@@ -25,7 +25,7 @@ class UserRequest(BaseModel):
 
 @router.post("/users", summary="사용자 추가")
 async def create_user(request: UserRequest, db: Session = Depends(get_db)):
-    new_user = LUsers(name=request.namLe, birthday=request.birthday, call=request.call, address=request.address)
+    new_user = LUsers(name=request.name, birthday=request.birthday, call=request.call, address=request.address)
     db.add(new_user)
     db.commit()
     return {"message": "create user"}

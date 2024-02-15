@@ -13,6 +13,7 @@ class LUsers(Base):
     call = Column(String(255), nullable=True)
     address = Column(String(255), nullable=True)
     created_at = Column(DATETIME(fsp=3), nullable=False, server_default=text("CURRENT_TIMESTAMP(3)"))
+    kakao_id = Column(BIGINT, nullable=True)
 
 class LQuestions(Base):
     __tablename__ = 'LQuestions'
