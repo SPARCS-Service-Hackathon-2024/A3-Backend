@@ -53,3 +53,15 @@ CREATE TABLE `LImages` (
     PRIMARY KEY (`image_id`),
     FOREIGN KEY (`answer_id`) REFERENCES `LAnswers`(`answer_id`)
 );
+
+CREATE TABLE `LSummary` (
+	`summary_id`	INT AUTO_INCREMENT	NOT NULL,
+	`question_id`	INT	NOT NULL,
+	`user_id`	INT	NOT NULL,
+	`chapter_id`	INT	NOT NULL,
+	`content`	TEXT	NOT NULL,
+	PRIMARY KEY (`summary_id`),
+	FOREIGN KEY (`question_id`) REFERENCES `LQuestions`(`question_id`),
+	FOREIGN KEY (`user_id`) REFERENCES `LUsers`(`user_id`),
+	FOREIGN KEY (`chapter_id`) REFERENCES `LChapter`(`chapter_id`)
+);
