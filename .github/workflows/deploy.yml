@@ -39,4 +39,4 @@ jobs:
           docker stop $(docker ps -q)
           docker rmi -f $(docker images -aq)
           docker pull ${{ secrets.KAKAO_CLOUD_PROJECT_NAME }}.kr-central-2.kcr.dev/${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}/lifebook:latest
-          docker run -e DB_PORT=$DB_PORT -e DB_DB=$DB_DB -e DB_HOST=$DB_HOST -e DB_PASSWORD=$DB_PASSWORD -e DB_USER=$DB_USER -e OPEN_API_KEY=$OPEN_API_KEY -d -p 8080:8000 ${{ secrets.KAKAO_CLOUD_PROJECT_NAME }}.kr-central-2.kcr.dev/${{ secrets.KAKAO_CLOUD_REPOSITORY_NAME }}/lifebook:latest
+          docker run -e DB_PORT=$DB_PORT -e DB_DB=$DB_DB -e DB_HOST=$DB_HOST -e DB_PASSWORD=$DB_PASSWORD -e DB_USER=$DB_USER -e OPEN_API_KEY=$OPEN_API_KEY -d -p 8080:8000 kucc-book.kr-central-2.kcr.dev/kubook-cr/lifebook:latest
