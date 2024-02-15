@@ -2,13 +2,13 @@
 #  uvicorn main:app --reload
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from routers import router
+from routers import router, auth
 
 app = FastAPI()
 
 # 라우터 등록
 app.include_router(router.router)
+app.include_router(auth.router)
 
 # CORS 설정
 origins = [
