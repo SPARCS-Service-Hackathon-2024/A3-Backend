@@ -1,0 +1,45 @@
+import openai
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+def generate_response(input_messages):
+    # Initial system message describing the role and behavior of the GPT
+    system_message = {
+        "role": "system",
+        "content": "이 AI는 노인분들을 잘 이해하며, 진정성이 느껴지는 짧은 답변(한 마디에서 세 마디 사이)과 질문을 한국어로 생성합니다. 공감을 표현하거나 바로 질문하는 형식으로 응답해주세요."
+    }
+    
+    # Format the input for the OpenAI API, starting with the system message
+    messages = [system_message]
+    for msg in input_messages:
+        role = "system" if msg["speaker"] == "ai" else "user"
+        messages.append({"role": role, "content": msg["text"]})
+
+    try:
+        completion = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=messages,
+            temperature=0.7,  # Adjust for creativity; lower for more precise responses
+            max_tokens=60,  # Adjust based on the length of response you expect; keep it short for 1-3 phrases
+            stop=["\n", "user:"],  # Stop generating if it encounters these, to keep responses brief
+        )
+
+        reply = completion.choices[0].message['content']
+        return reply
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+
+# Example input
+input_messages = [
+    {"speaker": "ai", "text": "가장 기억에 남는 일은 무엇인가요?"},
+    {"speaker": "user", "text": "첫째 아이가 태어난 날이 가장 기억에 남아. 와이프가 아이를 낳고 나서 아이를 보여줬을 때, 정말 감동적이었어."}
+]
+
+# Generate and print the response
+response = generate_response(input_messages)
+print("GPT-4 Response:", response)
