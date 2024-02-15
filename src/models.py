@@ -63,3 +63,16 @@ class LImages(Base):
     image_url = Column(String(255), nullable=False)
 
     answer = relationship("LAnswers")
+
+
+class LSummary(Base):
+    __tablename__ = 'LSummary'
+    summary_id = Column(Integer, primary_key=True, autoincrement=True)
+    question_id = Column(Integer, ForeignKey('LQuestions.question_id', onupdate='Cascade'), nullable=False)
+    user_id = Column(Integer, ForeignKey('LUsers.user_id', onupdate='Cascade'), nullable=False)
+    chapter_id = Column(Integer, ForeignKey('LChapter.chapter_id', onupdate='Cascade'), nullable=False)
+    content = Column(Text, nullable=False)
+
+    question = relationship("LQuestions")
+    user = relationship("LUsers")
+    chapter = relationship("LChapter")
