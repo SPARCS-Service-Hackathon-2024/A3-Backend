@@ -21,6 +21,8 @@ origins = [
     "http://127.0.0.1:8000/",
     "https://life-book-tau.vercel.app",
     "https://life-book-tau.vercel.app/",
+    "https://a3.r4bb1t.dev/",
+    "https://a3.r4bb1t.dev"
 ]
 
 app.add_middleware(
