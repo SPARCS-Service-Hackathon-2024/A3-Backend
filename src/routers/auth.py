@@ -1,3 +1,4 @@
+from pydantic import BaseModel, Field
 from fastapi import Header, Depends, APIRouter, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
@@ -11,12 +12,13 @@ from jose import jwt, JWTError
 SECRET_KEY = "secretkey"
 ALGORITHM = "HS256"
 
-from pydantic import BaseModel, Field
 
 router = APIRouter()
 
+
 class TokenData(BaseModel):
     id_token: str
+
 
 async def get_current_user(token: str = Header(None), db: Session = Depends(get_db)):
     if token is None:
@@ -44,32 +46,38 @@ async def get_current_user(token: str = Header(None), db: Session = Depends(get_
 
     return user
 
+
 @router.post("/kakao")
 async def kakao_login(token_data: TokenData, db: Session = Depends(get_db)):
     headers = {
         "Authorization": f"Bearer {token_data.id_token}"
     }
-    response = requests.post("https://kapi.kakao.com/v2/user/me", headers=headers)
+    response = requests.post(
+        "https://kapi.kakao.com/v2/user/me", headers=headers)
     if response.status_code == 200:
         user_info = response.json()
         print(user_info)
     else:
-        raise HTTPException(status_code=response.status_code, detail="Failed to fetch user information from Kakao")
-    
+        raise HTTPException(status_code=response.status_code,
+                            detail="Failed to fetch user information from Kakao")
+
     user = db.query(LUsers).filter(LUsers.kakao_id == user_info['id']).first()
 
     # access token 만들기
-    access_token = jwt.encode({"sub": user.user_id}, SECRET_KEY, algorithm=ALGORITHM)
+    access_token = jwt.encode({"sub": user.user_id},
+                              SECRET_KEY, algorithm=ALGORITHM)
 
     if user is None:
-        new_user = LUsers(kakao_id=user_info['id'], name=user_info['properties']['nickname'])
+        new_user = LUsers(
+            kakao_id=user_info['id'], name=user_info['properties']['nickname'])
         db.add(new_user)
         db.commit()
         new_user.access_token = access_token
         return new_user
-    
+
     user.access_token = access_token
     return user
+
 
 @router.get("/protected-route")
 async def protected_route(current_user: LUsers = Depends(get_current_user)):
