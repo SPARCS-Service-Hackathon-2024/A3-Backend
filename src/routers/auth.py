@@ -6,36 +6,32 @@ from database import get_db
 import requests
 from models import LUsers
 from datetime import datetime, timedelta
+from fastapi.security import HTTPBearer
 
 from jose import jwt, JWTError
 
 SECRET_KEY = "secretkey"
 ALGORITHM = "HS256"
 
+from pydantic import BaseModel
 
 router = APIRouter()
-
 
 class TokenData(BaseModel):
     id_token: str
 
+auth_scheme = HTTPBearer()
 
-async def get_current_user(token: str = Header(None), db: Session = Depends(get_db)):
-    if token is None:
+async def get_current_user(authorization :HTTPAuthorizationCredentials = Depends(auth_scheme), db: Session = Depends(get_db)):
+    if authorization is None:
         raise HTTPException(status_code=401, detail="토큰이 필요합니다.")
     try:
-        print("test1")
-        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
-        print("test2")
-        print(user_id)
-        print(user_id)
-        print(user_id)
-        print(user_id)
+        payload = jwt.decode(authorization.credentials, SECRET_KEY, algorithms=[ALGORITHM])
 
         user_id: int = payload.get("sub")
         if user_id is None:
             raise HTTPException(status_code=401, detail="유효하지 않은 토큰입니다.1")
-        if payload.get("exp") < datetime.utcnow():
+        if payload.get("exp") < datetime.utcnow().timestamp():
             raise HTTPException(status_code=401, detail="만료된 토큰입니다.")
     except JWTError:
         raise HTTPException(status_code=401, detail="유효하지 않은 토큰입니다.2")
@@ -63,9 +59,13 @@ async def kakao_login(token_data: TokenData, db: Session = Depends(get_db)):
 
     user = db.query(LUsers).filter(LUsers.kakao_id == user_info['id']).first()
 
+<<<<<<< HEAD
     # access token 만들기
     access_token = jwt.encode({"sub": user.user_id},
                               SECRET_KEY, algorithm=ALGORITHM)
+=======
+    access_token = jwt.encode({"sub": str(user.user_id), "exp": datetime.utcnow() + timedelta(weeks=4)}, SECRET_KEY, algorithm=ALGORITHM)
+>>>>>>> bbdec40e0caa1c99f0be8912f0981ab8f54b119d
 
     if user is None:
         new_user = LUsers(
