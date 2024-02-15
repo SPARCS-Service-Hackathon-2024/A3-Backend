@@ -69,10 +69,13 @@ async def make_followed_question(parent_id: int, db: Session):
     context = []
     p = parent
     while p is not None:
+        a = db.query(LAnswers).filter(LAnswers.question_id == p.parents_id).filter(LAnswers.user_id == p.user_id).first()
+        if a is None:
+            continue
         context.append(
             {
                 'speaker': 'user',
-                'text': db.query(LAnswers).filter(LAnswers.question_id == p.parents_id).filter(LAnswers.user_id == p.user_id).first().content
+                'text': a.content
             }
         )
         context.append(
@@ -93,4 +96,22 @@ async def make_followed_question(parent_id: int, db: Session):
         'status': 'success',
         'id': followed.question_id,
         'content': followed.content
+    }
+
+@router.get("/{id}/skip")
+async def skip_question(id: int, user=Depends(get_current_user), db: Session = Depends(get_db)):
+    question = db.query(LQuestions).filter(LQuestions.question_id == id).first()
+
+    if question.user_id != user.user_id:
+        raise HTTPException(status_code=403, detail="질문을 스킵할 수 없습니다.")
+    
+    user = db.query(LUsers).filter(LUsers.user_id == user.user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user.last_answered_question_id = question.next_question_id
+    db.commit()
+    
+    return {
+        'question_id': question.next_question_id
     }
