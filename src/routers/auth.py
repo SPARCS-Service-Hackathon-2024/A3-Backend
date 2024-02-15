@@ -1,3 +1,4 @@
+from pydantic import BaseModel
 from pydantic import BaseModel, Field
 from fastapi import Header, Depends, APIRouter, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -13,20 +14,23 @@ from jose import jwt, JWTError
 SECRET_KEY = "secretkey"
 ALGORITHM = "HS256"
 
-from pydantic import BaseModel
 
 router = APIRouter()
+
 
 class TokenData(BaseModel):
     id_token: str
 
+
 auth_scheme = HTTPBearer()
 
-async def get_current_user(authorization :HTTPAuthorizationCredentials = Depends(auth_scheme), db: Session = Depends(get_db)):
+
+async def get_current_user(authorization: HTTPAuthorizationCredentials = Depends(auth_scheme), db: Session = Depends(get_db)):
     if authorization is None:
         raise HTTPException(status_code=401, detail="토큰이 필요합니다.")
     try:
-        payload = jwt.decode(authorization.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(authorization.credentials,
+                             SECRET_KEY, algorithms=[ALGORITHM])
 
         user_id: int = payload.get("sub")
         if user_id is None:
@@ -45,6 +49,14 @@ async def get_current_user(authorization :HTTPAuthorizationCredentials = Depends
 
 @router.post("/kakao")
 async def kakao_login(token_data: TokenData, db: Session = Depends(get_db)):
+
+    # 테스트용 코드
+    if token_data.id_token == "minjae":
+        user = db.query(LUsers).filter(LUsers.user_id == -1).first()
+        access_token = jwt.encode({"sub": str(user.user_id), "exp": datetime.utcnow() + timedelta(weeks=4)}, SECRET_KEY, algorithm=ALGORITHM)
+        user.access_token = access_token
+        return user
+
     headers = {
         "Authorization": f"Bearer {token_data.id_token}"
     }
@@ -59,8 +71,8 @@ async def kakao_login(token_data: TokenData, db: Session = Depends(get_db)):
 
     user = db.query(LUsers).filter(LUsers.kakao_id == user_info['id']).first()
 
-
-    access_token = jwt.encode({"sub": str(user.user_id), "exp": datetime.utcnow() + timedelta(weeks=4)}, SECRET_KEY, algorithm=ALGORITHM)
+    access_token = jwt.encode({"sub": str(user.user_id), "exp": datetime.utcnow(
+    ) + timedelta(weeks=4)}, SECRET_KEY, algorithm=ALGORITHM)
 
     if user is None:
         new_user = LUsers(

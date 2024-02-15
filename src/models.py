@@ -24,7 +24,7 @@ class LQuestions(Base):
     __tablename__ = 'LQuestions'
     question_id = Column(Integer, primary_key=True, autoincrement=True)
     is_fixed = Column(Boolean, nullable=False, default=False)
-    chatper_id = Column(Integer, ForeignKey('LChapter.chapter_id', onupdate='Cascade'), nullable=False)
+    chapter_id = Column(Integer, ForeignKey('LChapter.chapter_id', onupdate='Cascade'), nullable=False)
     user_id = Column(Integer, ForeignKey('LUsers.user_id', onupdate='Cascade'), nullable=False)
     parents_id = Column(Integer, nullable=False)
     content = Column(Text, nullable=False)
