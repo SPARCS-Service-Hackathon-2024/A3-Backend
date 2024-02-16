@@ -31,4 +31,5 @@ async def get_chapters(user=Depends(get_current_user), db: Session = Depends(get
                 "summaries": summaries
             })
     result = list(filter(lambda x: x["summaries"], result))
+    result = sorted(result, key=lambda x: x["chapter_id"])
     return result
